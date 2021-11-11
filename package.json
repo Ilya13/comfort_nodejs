@@ -1,0 +1,11 @@
+{
+  "name": "iot",
+  "version": "0.0.1",
+  "description": "Smart Home",
+  "main": "index.js",
+  "author": "Vertiprakhov I.A.",
+  "license": "MIT",
+  "dependencies": {
+    "material-design-lite": "^1.3.0"
+  }
+}
