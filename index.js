@@ -1,7 +1,7 @@
 'use strict';
 
 const http = require('http');
-const { handleIndex, handleBooth, handleOff, handleCancelOff, handleAssets, handle404 } = require('./handlers');
+const { handleIndex, handleBooth, handleOff, handleCancelOff, handleGetBoothState, handlePutBoothState, handleAssets, handle404 } = require('./handlers');
 
 const hostname = '192.168.31.52';
 const port = 80;
@@ -26,8 +26,24 @@ const server = http.createServer((request, response) => {
 			handleCancelOff(response);
 			return;
 		}
+		if (request.url === '/booth/state') {
+			handleGetBoothState(response);
+			return;
+		}
 		if (request.url.startsWith('/assets') || request.url.startsWith('/node_modules')) {
 			handleAssets(response, request.url);
+			return;
+		}
+	}
+	if (request.method == 'PUT') {
+		if (request.url === '/booth/state') {
+			let state = ''
+			request.on('data', (data) => {
+				state += data;
+			})
+			request.on('end', () => {
+				handlePutBoothState(response, state);
+			})
 			return;
 		}
 	}

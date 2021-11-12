@@ -1,8 +1,11 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+const exec = require('child_process').exec;
+const { saveBoothState } = require('./utils');
+
 exports.handleIndex = (response, isMobile) => {
-	const fs = require('fs');
-	const path = require('path');
 	const index = path.join(__dirname, 'index.html');
 	response.statusCode = 200;
 	response.setHeader('Content-Type', 'text/html');
@@ -10,8 +13,6 @@ exports.handleIndex = (response, isMobile) => {
 };
 
 exports.handleBooth = (response, isMobile) => {
-	const fs = require('fs');
-	const path = require('path');
 	const index = path.join(__dirname, 'booth.html');
 	response.statusCode = 200;
 	response.setHeader('Content-Type', 'text/html');
@@ -19,7 +20,6 @@ exports.handleBooth = (response, isMobile) => {
 };
 
 exports.handleOff = (response) => {
-	const exec = require('child_process').exec;
 	exec('shutdown /s /t 60 /f');
 	response.statusCode = 200;
 	response.setHeader('Content-Type', 'text/plain');
@@ -27,16 +27,32 @@ exports.handleOff = (response) => {
 };
 
 exports.handleCancelOff = (response) => {
-	const exec = require('child_process').exec;
 	exec('shutdown /a');
 	response.statusCode = 200;
 	response.setHeader('Content-Type', 'text/plain');
 	response.end('Shutdown canceled');
 };
 
+exports.handleGetBoothState = (response) => {
+	exports.handleAssets(response, 'assets/booth_state.json');
+};
+
+exports.handlePutBoothState = (response, body) => {
+	try {
+		const state = JSON.parse(body);
+		saveBoothState(state);
+		response.statusCode = 200;
+		response.setHeader('Content-Type', 'text/plain');
+		response.end('Shutdown canceled');
+	} catch (e) {
+		console.log(e);
+		response.statusCode = 400;
+		response.setHeader('Content-Type', 'text/plain');
+		response.end('Unknown State format');
+	}
+}
+
 exports.handleAssets = (response, assets) => {
-	const fs = require('fs');
-	const path = require('path');
 	const favicon = path.join(__dirname, assets);
 	response.statusCode = 200;
 	response.setHeader('Content-Type', getContentType(assets));

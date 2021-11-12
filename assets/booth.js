@@ -1,6 +1,16 @@
 'use strict';
 
-let boothState = {autoMode: true};
+let boothState = {
+	temperatureFloor: null,
+	temperatureAir: null,
+	powerOn: false,
+	autoMode: false,
+	controlTemperature: null,
+	relayFloorOn: false,
+	relayHeaterOn: false,
+	lastCheck: null,
+	heatOnTime: null,
+};
 let snackbarContainer;
 let floorTemperatureLabel;
 let boothTemperatureLabel;
@@ -18,8 +28,6 @@ let heatOnCard;
 let floorCard;
 let heaterCard;
 
-const espHost = 'http://192.168.31.238';
-
 function readState() {
 	let xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
@@ -28,13 +36,20 @@ function readState() {
 			updateState();
 		}
     }
-    xmlHttp.open('GET', espHost + '/state', true);
+    xmlHttp.open('GET', './booth/state', true);
     xmlHttp.send(null);
 }
 
+function writeState() {
+	let xmlHttp = new XMLHttpRequest();
+    xmlHttp.open('PUT', './booth/state', true);
+	xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xmlHttp.send(JSON.stringify(boothState));
+}
+
 function updateState() {
-	floorTemperatureLabel.innerText = boothState.temperatureFloor + ' ℃';
-	boothTemperatureLabel.innerText = boothState.temperatureAir + ' ℃';
+	floorTemperatureLabel.innerText = (boothState.temperatureFloor ?? '--') + ' ℃';
+	boothTemperatureLabel.innerText = (boothState.temperatureAir ?? '--') + ' ℃';
 	if (boothState.powerOn) {
 		powerSwitch.parentElement.MaterialSwitch.on();
 	} else {
@@ -92,35 +107,26 @@ function addHandlers() {
 	powerSwitch.addEventListener('change', function(event) {
 		boothState.powerOn = !boothState.powerOn;
 		updateComponentsVisible();
-		const xmlHttp = new XMLHttpRequest();
-		const request = espHost + (boothState.powerOn ? '/on' : '/off');
-		xmlHttp.open('GET', request, true);
-		xmlHttp.send(null);
+		writeState();
 	});
 	autoSwitch.addEventListener('change', function(event) {
 		boothState.autoMode = !boothState.autoMode;
 		updateComponentsVisible();
-		const xmlHttp = new XMLHttpRequest();
-		xmlHttp.open('GET', espHost + '/mode?v=' + (boothState.autoMode ? '1' : '0'), true);
-		xmlHttp.send(null);
+		writeState();
 	});
 	floorSwitch.addEventListener('change', function(event) {
 		if (boothState.autoMode) {
 			return;
 		}
 		boothState.relayFloorOn = !boothState.relayFloorOn;
-		const xmlHttp = new XMLHttpRequest();
-		xmlHttp.open('GET', espHost + '/relay?n=floor&s=' + (boothState.relayFloorOn ? '1' : '0'), true);
-		xmlHttp.send(null);
+		writeState();
 	});
 	heaterSwitch.addEventListener('change', function(event) {
 		if (boothState.autoMode) {
 			return;
 		}
 		boothState.relayHeaterOn = !boothState.relayHeaterOn;
-		const xmlHttp = new XMLHttpRequest();
-		xmlHttp.open('GET', espHost + '/relay?n=heater&s=' + (boothState.relayHeaterOn ? '1' : '0'), true);
-		xmlHttp.send(null);
+		writeState();
 	});
 	temperatureInput.addEventListener('change', function(event) {
 		if (!boothState.autoMode) {
@@ -132,9 +138,7 @@ function addHandlers() {
 		}
 		temperatureInput.parentElement.classList.remove('is-invalid');
 		boothState.controlTemperature = +temperatureInput.value;
-		const xmlHttp = new XMLHttpRequest();
-		xmlHttp.open('GET', espHost + '/temperature?v=' + boothState.controlTemperature, true);
-		xmlHttp.send(null);
+		writeState();
 	});
 }
 
