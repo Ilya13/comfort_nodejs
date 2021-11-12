@@ -1,0 +1,13 @@
+# copy this file to /lib/systemd/system/
+
+[Unit]
+Description=LTPS NodeJS Comfort Application
+After=ilya.vertiprakhov
+
+[Service]
+Restart=on-failure
+WorkingDirectory=/var/www/comfort/
+ExecStart=/usr/bin/node /var/www/comfort/index.js
+
+[Install]
+WantedBy=multi-user.target
