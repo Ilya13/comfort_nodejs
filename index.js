@@ -4,7 +4,6 @@ const http = require('http');
 const { handleIndex, handleBooth, handleOff, handleCancelOff, handleGetBoothState, handlePutBoothState, handleAssets, handle404 } = require('./handlers');
 
 const args = require('minimist')(process.argv.slice(2));
-const hostname = args['host'] ?? '192.168.31.52';
 const port = args['port'] ?? 80;
 
 const server = http.createServer((request, response) => {
@@ -51,6 +50,6 @@ const server = http.createServer((request, response) => {
 	handle404(response);
 });
 
-server.listen(port, hostname, () => {
-	console.log(`Server running at http://${hostname}:${port}/`);
+server.listen(port, undefined, () => {
+	console.log(`Server running at http://:${port}/`);
 });
