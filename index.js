@@ -3,8 +3,9 @@
 const http = require('http');
 const { handleIndex, handleBooth, handleOff, handleCancelOff, handleGetBoothState, handlePutBoothState, handleAssets, handle404 } = require('./handlers');
 
-const hostname = '192.168.31.52';
-const port = 80;
+const args = require('minimist')(process.argv.slice(2));
+const hostname = args['host'] ?? '192.168.31.52';
+const port = args['port'] ?? 80;
 
 const server = http.createServer((request, response) => {
 	if (request.method == 'GET') {
