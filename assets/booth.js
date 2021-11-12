@@ -48,8 +48,8 @@ function writeState() {
 }
 
 function updateState() {
-	floorTemperatureLabel.innerText = (boothState.temperatureFloor ?? '--') + ' ℃';
-	boothTemperatureLabel.innerText = (boothState.temperatureAir ?? '--') + ' ℃';
+	floorTemperatureLabel.innerText = (boothState.temperatureFloor ? Math.round(boothState.temperatureFloor) : '') + ' ℃';
+	boothTemperatureLabel.innerText = (boothState.temperatureAir ? Math.round(boothState.temperatureAir) : '') + ' ℃';
 	if (boothState.powerOn) {
 		powerSwitch.parentElement.MaterialSwitch.on();
 	} else {
