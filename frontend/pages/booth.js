@@ -34,14 +34,14 @@ export class BoothComponent extends BaseComponent {
 			<div class="temperature-container">
 				<div class="mdl-card mdl-shadow--4dp portfolio-card" style="background-color: #FFDE03">
 					<div class="mdl-card__title">
-						<h1 id="booth-temperature-label">&#8451;</h1>
+						<h3 id="booth-temperature-label">&#8451;</h3>
 						<div class="mdl-layout-spacer"></div>
 						<img src="/assets/icons/booth.svg" alt="Booth" width="36" height="36"/>
 					</div>
 				</div>
 				<div class="mdl-card mdl-shadow--4dp portfolio-card" style="background-color: #FF0266">
 					<div class="mdl-card__title">
-						<h1 id="floor-temperature-label">&#8451;</h1>
+						<h3 id="floor-temperature-label">&#8451;</h3>
 						<div class="mdl-layout-spacer"></div>
 						<img src="/assets/icons/floor.svg" alt="Floor" width="36" height="36"/>
 					</div>
