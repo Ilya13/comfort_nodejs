@@ -54,7 +54,7 @@ exports.handlePutBoothState = (response, body) => {
 
 exports.handleAssets = (response, assets) => {
 	const asset = path.join(__dirname, assets);
-	if (fs.existsSync()) {
+	if (fs.existsSync(asset)) {
 		response.statusCode = 200;
 		response.setHeader('Content-Type', getContentType(assets));
 		fs.createReadStream(asset).pipe(response);
