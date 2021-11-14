@@ -1,23 +1,13 @@
 'use strict';
 
 const http = require('http');
-const { handleIndex, handleBooth, handleOff, handleCancelOff, handleGetBoothState, handlePutBoothState, handleAssets, handle404 } = require('./handlers');
+const { handleOff, handleCancelOff, handleGetBoothState, handlePutBoothState, handleAssets, handleNodeModules, handleFile, handle404 } = require('./backend/handlers');
 
 const args = require('minimist')(process.argv.slice(2));
 const port = args['port'] ?? 80;
 
 const server = http.createServer((request, response) => {
 	if (request.method == 'GET') {
-		if (request.url === '/') {
-			const isMobile = /mobile/i.test(request.headers['user-agent']);
-			handleIndex(response, isMobile);
-			return;
-		}
-		if (request.url === '/booth') {
-			const isMobile = /mobile/i.test(request.headers['user-agent']);
-			handleBooth(response, isMobile);
-			return;
-		}
 		if (request.url === '/off') {
 			handleOff(response);
 			return;
@@ -30,10 +20,20 @@ const server = http.createServer((request, response) => {
 			handleGetBoothState(response);
 			return;
 		}
-		if (request.url.startsWith('/assets') || request.url.startsWith('/node_modules')) {
+		if (request.url.startsWith('/assets')) {
 			handleAssets(response, request.url);
 			return;
 		}
+		if (request.url.startsWith('/node_modules')) {
+			handleNodeModules(response, request.url);
+			return;
+		}
+		if (request.url.endsWith('.js')) {
+			handleFile(response, `../frontend${request.url}`);
+			return;
+		}
+		handleFile(response, '../frontend/index.html');
+		return;
 	}
 	if (request.method == 'PUT') {
 		if (request.url === '/booth/state') {

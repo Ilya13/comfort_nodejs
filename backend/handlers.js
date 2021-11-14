@@ -5,20 +5,6 @@ const path = require('path');
 const exec = require('child_process').exec;
 const { saveBoothState } = require('./utils');
 
-exports.handleIndex = (response, isMobile) => {
-	const index = path.join(__dirname, 'index.html');
-	response.statusCode = 200;
-	response.setHeader('Content-Type', 'text/html');
-	fs.createReadStream(index).pipe(response);
-};
-
-exports.handleBooth = (response, isMobile) => {
-	const index = path.join(__dirname, 'booth.html');
-	response.statusCode = 200;
-	response.setHeader('Content-Type', 'text/html');
-	fs.createReadStream(index).pipe(response);
-};
-
 exports.handleOff = (response) => {
 	exec('shutdown /s /t 60 /f');
 	response.statusCode = 200;
@@ -34,7 +20,7 @@ exports.handleCancelOff = (response) => {
 };
 
 exports.handleGetBoothState = (response) => {
-	exports.handleAssets(response, 'assets/booth_state.json');
+	exports.handleFile(response, 'state/booth.json');
 };
 
 exports.handlePutBoothState = (response, body) => {
@@ -53,18 +39,27 @@ exports.handlePutBoothState = (response, body) => {
 }
 
 exports.handleAssets = (response, assets) => {
-	if (assets.endsWith('?')) {
-		assets = assets.slice(0, -1);
+	exports.handleFile(response, `../frontend${assets}`);
+}
+
+exports.handleNodeModules = (response, nodeModules) => {
+	exports.handleFile(response, `..${nodeModules}`);
+}
+
+exports.handleFile = (response, file) => {
+	if (file.endsWith('?')) {
+		file = file.slice(0, -1);
 	}
-	const asset = path.join(__dirname, assets);
+	const asset = path.join(__dirname, file);
 	if (fs.existsSync(asset)) {
 		response.statusCode = 200;
-		response.setHeader('Content-Type', getContentType(assets));
+		response.setHeader('Content-Type', getContentType(file));
 		fs.createReadStream(asset).pipe(response);
 	} else {
+		console.log(`404: ${asset}`);
 		exports.handle404(response);
 	}
-};
+}
 
 exports.handle404 = (response) => {
 	response.statusCode = 404;
@@ -77,6 +72,7 @@ function getContentType(assets) {
 		case 'icon': return 'image/vnd.microsoft.icon; charset=UTF-8';
 		case 'js': return 'application/javascript; charset=UTF-8';
 		case 'css': return 'text/css; charset=utf-8';
+		case 'svg': return 'image/svg+xml; charset=utf-8';
 		default: return '';
 	}
 }

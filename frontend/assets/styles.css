@@ -1,0 +1,83 @@
+.home-max-width {
+    max-width: 500px;
+    margin: auto;
+}
+
+.mdl-layout__container {
+	background-color: #263238;
+	overflow-y: auto;
+}
+
+.mdl-card {
+	min-height: inherit;
+	width: auto;
+}
+
+.mdl-card__actions {
+	display: flex;
+    justify-content: flex-end;
+}
+
+.mdl-switch {
+	margin-right: 8px;
+}
+
+.flex-space {
+	justify-content: space-between;
+}
+
+.light {
+	color: #ffff;
+}
+
+.light svg {
+	fill: #ffff;
+}
+
+.mdl-textfield {
+	width: 30px;
+	padding: 0;
+}
+
+.d-none {
+	display: none;
+}
+
+.outlet {
+	height: 100%;
+	width: 100%;
+}
+
+.main-container {
+	height: 100%;
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	align-items: center;
+}
+
+.main-card {
+	background-color: #3E4EB8;
+	cursor: pointer;
+}
+
+.booth-container, .house-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	padding: 16px;
+}
+
+.booth-container > *, .house-container > * {
+	align-self: stretch;
+}
+
+.temperature-container {
+	display: flex;
+	gap: 1rem;
+}
+
+.temperature-container > * {
+	flex-grow: 1;
+}

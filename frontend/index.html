@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<title>Комфорт</title>
+	<base href="/">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
+	<link rel="stylesheet" href="/node_modules/material-design-lite/material.min.css">
+	<script src="/node_modules/material-design-lite/material.min.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="/assets/styles.css">
+	<script src="/node_modules/director/build/director.min.js"></script>
+	<script src="/index.js" type="module"></script>
+</head>
+<body>
+	<div class="mdl-layout__container">
+		<div class="mdl-layout">
+			<main class="mdl-layout__content">
+				<div id="router_outlet" class="outlet"></div>
+			</main>
+		</div>
+		<div id="toast" class="mdl-js-snackbar mdl-snackbar">
+			<div class="mdl-snackbar__text"></div>
+			<button class="mdl-snackbar__action" type="button"></button>
+		</div>
+	</div>
+</body>
+</html>
