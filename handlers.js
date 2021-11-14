@@ -58,12 +58,10 @@ exports.handleAssets = (response, assets) => {
 	}
 	const asset = path.join(__dirname, assets);
 	if (fs.existsSync(asset)) {
-		console.log(`Load file ${asset}`);
 		response.statusCode = 200;
 		response.setHeader('Content-Type', getContentType(assets));
 		fs.createReadStream(asset).pipe(response);
 	} else {
-		console.log(`Not found ${asset}`);
 		exports.handle404(response);
 	}
 };
