@@ -28,7 +28,7 @@ const server = http.createServer((request, response) => {
 			handleNodeModules(response, request.url);
 			return;
 		}
-		if (request.url.endsWith('.js')) {
+		if (request.url.endsWith('.js') || request.url.endsWith('.json')) {
 			handleFile(response, `../frontend${request.url}`);
 			return;
 		}
