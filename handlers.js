@@ -53,6 +53,9 @@ exports.handlePutBoothState = (response, body) => {
 }
 
 exports.handleAssets = (response, assets) => {
+	if (assets.endsWith('?')) {
+		assets = assets.slice(0, -1);
+	}
 	const asset = path.join(__dirname, assets);
 	if (fs.existsSync(asset)) {
 		console.log(`Load file ${asset}`);
