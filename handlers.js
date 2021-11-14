@@ -53,10 +53,14 @@ exports.handlePutBoothState = (response, body) => {
 }
 
 exports.handleAssets = (response, assets) => {
-	const favicon = path.join(__dirname, assets);
-	response.statusCode = 200;
-	response.setHeader('Content-Type', getContentType(assets));
-	fs.createReadStream(favicon).pipe(response);
+	const asset = path.join(__dirname, assets);
+	if (fs.existsSync()) {
+		response.statusCode = 200;
+		response.setHeader('Content-Type', getContentType(assets));
+		fs.createReadStream(asset).pipe(response);
+	} else {
+		exports.handle404(response);
+	}
 };
 
 exports.handle404 = (response) => {
