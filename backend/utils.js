@@ -11,5 +11,5 @@ exports.saveHouseState = (state) => {
 }
 
 exports.saveBoothState = (state) => {
-    saveState('house', state);
+    saveState('booth', state);
 }
