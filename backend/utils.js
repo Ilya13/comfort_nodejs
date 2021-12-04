@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 function saveState(name, state) {
-	const stateFile = path.join(__dirname, `./backend/state/${name}.json`);
+	const stateFile = path.join(__dirname, `./state/${name}.json`);
     console.log(`Try put state ${stateFile}`)
     fs.writeFileSync(stateFile, JSON.stringify(state));
 }
