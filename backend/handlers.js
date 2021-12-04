@@ -20,7 +20,7 @@ exports.handleCancelOff = (response) => {
 };
 
 exports.handleGetBoothState = (response) => {
-	exports.handleFile(response, './state/booth.json');
+	exports.handleFile(response, 'state/booth.json');
 };
 
 exports.handlePutBoothState = (response, body) => {
@@ -52,6 +52,7 @@ exports.handleFile = (response, file) => {
 	}
 	const asset = path.join(__dirname, file);
 	if (fs.existsSync(asset)) {
+		console.log(`GET file ${asset}`);
 		response.statusCode = 200;
 		response.setHeader('Content-Type', getContentType(file));
 		fs.createReadStream(asset).pipe(response);
