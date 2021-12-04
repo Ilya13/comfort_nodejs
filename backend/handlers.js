@@ -20,7 +20,7 @@ exports.handleCancelOff = (response) => {
 };
 
 exports.handleGetBoothState = (response) => {
-	exports.handleFile(response, 'state/booth.json');
+	exports.handleFile(response, './backend/state/booth.json');
 };
 
 exports.handlePutBoothState = (response, body) => {
