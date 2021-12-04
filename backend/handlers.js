@@ -20,7 +20,7 @@ exports.handleCancelOff = (response) => {
 };
 
 exports.handleGetBoothState = (response) => {
-	exports.handleFile(response, './backend/state/booth.json');
+	exports.handleFile(response, './state/booth.json');
 };
 
 exports.handlePutBoothState = (response, body) => {
@@ -29,12 +29,12 @@ exports.handlePutBoothState = (response, body) => {
 		saveBoothState(state);
 		response.statusCode = 200;
 		response.setHeader('Content-Type', 'text/plain');
-		response.end('Shutdown canceled');
+		response.end('Booth state saved');
 	} catch (e) {
 		console.log(e);
-		response.statusCode = 400;
+		response.statusCode = 500;
 		response.setHeader('Content-Type', 'text/plain');
-		response.end('Unknown State format');
+		response.end('Booth state didn\'t save');
 	}
 }
 

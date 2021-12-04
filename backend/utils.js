@@ -3,7 +3,9 @@
 const fs = require('fs');
 
 function saveState(name, state) {
-    fs.writeFile(`./backend/state/${name}.json`, JSON.stringify(state), () => {});
+    fs.writeFile(`./backend/state/${name}.json`, JSON.stringify(state), (error) => {
+        console.log(error);
+    });
 }
 
 exports.saveHouseState = (state) => {
