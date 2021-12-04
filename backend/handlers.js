@@ -52,7 +52,6 @@ exports.handleFile = (response, file) => {
 	}
 	const asset = path.join(__dirname, file);
 	if (fs.existsSync(asset)) {
-		console.log(`GET file ${asset}`);
 		response.statusCode = 200;
 		response.setHeader('Content-Type', getContentType(file));
 		fs.createReadStream(asset).pipe(response);
