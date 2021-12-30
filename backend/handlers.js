@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').exec;
-const { saveBoothState } = require('./utils');
+const { saveHouseState, saveBoothState } = require('./utils');
 
 exports.handleOff = (response) => {
 	exec('shutdown /s /t 60 /f');
@@ -18,6 +18,26 @@ exports.handleCancelOff = (response) => {
 	response.setHeader('Content-Type', 'text/plain');
 	response.end('Shutdown canceled');
 };
+
+
+exports.handleGetHouseState = (response) => {
+	exports.handleFile(response, 'state/house.json');
+};
+
+exports.handlePutHouseState = (response, body) => {
+	try {
+		const state = JSON.parse(body);
+		saveHouseState(state);
+		response.statusCode = 200;
+		response.setHeader('Content-Type', 'text/plain');
+		response.end('House state saved');
+	} catch (e) {
+		console.log(e);
+		response.statusCode = 500;
+		response.setHeader('Content-Type', 'text/plain');
+		response.end('House state didn\'t save');
+	}
+}
 
 exports.handleGetBoothState = (response) => {
 	exports.handleFile(response, 'state/booth.json');

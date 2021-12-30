@@ -1,7 +1,18 @@
 'use strict';
 
 const http = require('http');
-const { handleOff, handleCancelOff, handleGetBoothState, handlePutBoothState, handleAssets, handleNodeModules, handleFile, handle404 } = require('./backend/handlers');
+const {
+	handleOff,
+	handleCancelOff,
+	handleGetHouseState,
+	handlePutHouseState,
+	handleGetBoothState,
+	handlePutBoothState,
+	handleAssets,
+	handleNodeModules,
+	handleFile,
+	handle404
+} = require('./backend/handlers');
 
 const args = require('minimist')(process.argv.slice(2));
 const port = args['port'] ?? 80;
@@ -18,6 +29,10 @@ const server = http.createServer((request, response) => {
 		}
 		if (request.url === '/booth/state') {
 			handleGetBoothState(response);
+			return;
+		}
+		if (request.url === '/house/state') {
+			handleGetHouseState(response);
 			return;
 		}
 		if (request.url.startsWith('/assets')) {
@@ -43,6 +58,16 @@ const server = http.createServer((request, response) => {
 			})
 			request.on('end', () => {
 				handlePutBoothState(response, state);
+			})
+			return;
+		}
+		if (request.url === '/house/state') {
+			let state = ''
+			request.on('data', (data) => {
+				state += data;
+			})
+			request.on('end', () => {
+				handlePutHouseState(response, state);
 			})
 			return;
 		}

@@ -1,1 +1,8 @@
-{"temperatureFloor":null,"temperatureAir":null,"powerOn":true,"autoMode":false,"controlTemperature":null,"relayFloorOn":true,"relayHeaterOn":false,"lastCheck":null,"heatOnTime":null}
+{
+    "humidity": 0,
+    "temperature": 0,
+    "relayKitchenOn": false,
+    "relayLivingOn": false,
+    "relayDiningOn": false,
+    "relayHallwayOn": false
+}
