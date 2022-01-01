@@ -30,7 +30,7 @@ export class BoothComponent extends BaseComponent {
 
 	getTemplate() {
 		return `
-		<div class="booth-container">
+		<div class="container">
 			<div class="temperature-container">
 				<div class="mdl-card mdl-shadow--4dp portfolio-card" style="background-color: #FFDE03">
 					<div class="mdl-card__title">
@@ -223,8 +223,8 @@ export class BoothComponent extends BaseComponent {
 	}
 
 	_updateState() {
-		this.floorTemperatureLabel.innerText = (this.boothState.temperatureFloor ? Math.round(this.boothState.temperatureFloor) : '') + ' ℃';
-		this.boothTemperatureLabel.innerText = (this.boothState.temperatureAir ? Math.round(this.boothState.temperatureAir) : '') + ' ℃';
+		this.floorTemperatureLabel.innerText = (this.boothState.temperatureFloor !== null && this.boothState.temperatureFloor !== undefined ? Math.round(this.boothState.temperatureFloor) : '') + ' ℃';
+		this.boothTemperatureLabel.innerText = (this.boothState.temperatureAir !== null && this.boothState.temperatureAir !== undefined ? Math.round(this.boothState.temperatureAir) : '') + ' ℃';
 		if (this.boothState.powerOn) {
 			this.powerSwitch.parentElement.MaterialSwitch.on();
 		} else {

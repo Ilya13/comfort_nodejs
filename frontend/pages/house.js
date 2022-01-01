@@ -2,13 +2,40 @@ import { BaseComponent } from './base.component.js';
 import snackbarContainer from '../snackbar.js';
 
 export class HouseComponent extends BaseComponent {
-	_homeState;
-	_dimmers;
-	_espHost = 'http://192.168.31.213';
+	houseState = {
+		humidity: null,
+		temperature: null,
+		relayKitchenOn: false,
+		relayLivingOn: false,
+		relayDiningOn: false,
+		relayHallwayOn: false
+	}
+	temperatureLabel;
+	humidityLabel;
+	livingSwitch;
+	diningSwitch;
+	kitchenSwitch;
+	hallwaySwitch;
 
 	getTemplate() {
 		return `
-			<div class="house-container">
+			<div class="container">
+				<div class="temperature-container">
+					<div class="mdl-card mdl-shadow--4dp portfolio-card" style="background-color: #FFDE03">
+						<div class="mdl-card__title">
+							<h3 id="temperature-label">&#8451;</h3>
+							<div class="mdl-layout-spacer"></div>
+							<img src="/assets/icons/temperature.svg" alt="Temperature" width="36" height="36"/>
+						</div>
+					</div>
+					<div class="mdl-card mdl-shadow--4dp portfolio-card" style="background-color: #FF0266">
+						<div class="mdl-card__title">
+							<h3 id="humidity-label">&#8451;</h3>
+							<div class="mdl-layout-spacer"></div>
+							<img src="/assets/icons/humidity.svg" alt="Humidity" width="36" height="36"/>
+						</div>
+					</div>
+				</div>
 				<div class="mdl-card mdl-shadow--4dp portfolio-card" style="background-color: #FFDE03">
 					<div class="mdl-card__title">
 						<h2 class="mdl-card__title-text">Гостинная</h2>
@@ -17,8 +44,9 @@ export class HouseComponent extends BaseComponent {
 					</div>
 					<div class="mdl-card__actions mdl-card--border">
 						<div>
-							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="dimmer-1">
-								<input type="checkbox" id="dimmer-1" class="mdl-switch__input dimmer__input">
+							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="living-switch">
+								<input type="checkbox" id="living-switch" class="mdl-switch__input dimmer__input">
+								<span class="mdl-switch__label"></span>
 							</label>
 						</div>
 					</div>
@@ -31,8 +59,9 @@ export class HouseComponent extends BaseComponent {
 					</div>
 					<div class="mdl-card__actions mdl-card--border">
 						<div>
-							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="dimmer-2">
-								<input type="checkbox" id="dimmer-2" class="mdl-switch__input dimmer__input">
+							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="dining-switch">
+								<input type="checkbox" id="dining-switch" class="mdl-switch__input dimmer__input">
+								<span class="mdl-switch__label"></span>
 							</label>
 						</div>
 					</div>
@@ -45,8 +74,8 @@ export class HouseComponent extends BaseComponent {
 					</div>
 					<div class="mdl-card__actions mdl-card--border">
 						<div>
-							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="dimmer-3">
-								<input type="checkbox" id="dimmer-3" class="mdl-switch__input dimmer__input">
+							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="kitchen-switch">
+								<input type="checkbox" id="kitchen-switch" class="mdl-switch__input dimmer__input">
 								<span class="mdl-switch__label"></span>
 							</label>
 						</div>
@@ -60,29 +89,11 @@ export class HouseComponent extends BaseComponent {
 					</div>
 					<div class="mdl-card__actions mdl-card--border">
 						<div>
-							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="dimmer-4">
-								<input type="checkbox" id="dimmer-4" class="mdl-switch__input dimmer__input">
+							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="hallway-switch">
+								<input type="checkbox" id="hallway-switch" class="mdl-switch__input dimmer__input">
 								<span class="mdl-switch__label"></span>
 							</label>
 						</div>
-					</div>
-				</div>
-				<div class="mdl-card mdl-shadow--4dp portfolio-card" style="background-color: #9E9E9E">
-					<div class="mdl-card__title">
-						<h2 class="mdl-card__title-text">Копьютер</h2>
-						<div class="mdl-layout-spacer"></div>
-						<img src="/assets/icons/desk.svg" alt="Desk" width="36" height="36"/>
-					</div>
-					<div class="mdl-card__actions mdl-card--border flex-space">
-						<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" id="pc-on">
-							Включить
-						</button>
-						<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" id="pc-off">
-							Выключить
-						</button>
-						<button class="mdl-button mdl-js-button mdl-button--raised" id="pc-off-cancel">
-							Отменить
-						</button>
 					</div>
 				</div>
 			</div>
@@ -90,80 +101,80 @@ export class HouseComponent extends BaseComponent {
 	}
 
 	onInit() {
-		this._dimmers = document.getElementsByClassName('mdl-switch');
-		this._addPcHandlers();
-		this._addDimmerHandlers();
-		this._readDimmerStates();
+		this._initComponents();
+		this._addListeners();
+		this._readState();
 	}
 
-	_readDimmerStates() {
+	_initComponents() {
+		this.temperatureLabel = document.getElementById('temperature-label');
+		this.humidityLabel = document.getElementById('humidity-label');
+		this.livingSwitch = document.getElementById('living-switch');
+		this.diningSwitch = document.getElementById('dining-switch');
+		this.kitchenSwitch = document.getElementById('kitchen-switch');
+		this.hallwaySwitch = document.getElementById('hallway-switch');
+	}
+
+	_readState() {
 		let xmlHttp = new XMLHttpRequest();
-		xmlHttp.onreadystatechange = function() { 
+		xmlHttp.onreadystatechange = () => { 
 			if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-				this._homeState = JSON.parse(xmlHttp.responseText);
+				this.houseState = JSON.parse(xmlHttp.responseText);
 				this._updateState();
 			}
 		}
-		xmlHttp.open('GET', this._espHost + '/state', true);
+		xmlHttp.open('GET', './house/state', true);
 		xmlHttp.send(null);
+	}
+
+	_writeState() {
+		let xmlHttp = new XMLHttpRequest();
+		xmlHttp.open('PUT', './house/state', true);
+		xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+		xmlHttp.send(JSON.stringify(this.houseState));
 	}
 
 	_updateState() {
-		for (let i = 0; i < this._dimmers.length; i++) {
-			if (this._homeState.dimmers[i].state === 1) {
-				this._dimmers[i].MaterialSwitch.on();
-			} else {
-				this._dimmers[i].MaterialSwitch.off();
-			}
+		this.temperatureLabel.innerText = (this.houseState.temperature !== null && this.houseState.temperature !== undefined ? Math.round(this.houseState.temperature) : '') + ' ℃';
+		this.humidityLabel.innerText = (this.houseState.humidity !== null && this.houseState.humidity !== undefined ? Math.round(this.houseState.humidity) : '') + ' %';
+		if (this.houseState.relayLivingOn) {
+			this.livingSwitch.parentElement.MaterialSwitch.on();
+		} else {
+			this.livingSwitch.parentElement.MaterialSwitch.off();
+		}
+		if (this.houseState.relayDiningOn) {
+			this.diningSwitch.parentElement.MaterialSwitch.on();
+		} else {
+			this.diningSwitch.parentElement.MaterialSwitch.off();
+		}
+		if (this.houseState.relayKitchenOn) {
+			this.kitchenSwitch.parentElement.MaterialSwitch.on();
+		} else {
+			this.kitchenSwitch.parentElement.MaterialSwitch.off();
+		}
+		if (this.houseState.relayHallwayOn) {
+			this.hallwaySwitch.parentElement.MaterialSwitch.on();
+		} else {
+			this.hallwaySwitch.parentElement.MaterialSwitch.off();
 		}
 	}
 
-	_addPcHandlers() {
-		const pcOn = document.getElementById('pc-on');
-		this.addEventListener(pcOn, 'click', () => this._powerOnPC());
-		
-		const pcOff = document.getElementById('pc-off');
-		this.addEventListener(pcOff, 'click', () => this._powerOffPC());
-		
-		const pcOffCancel = document.getElementById('pc-off-cancel');
-		this.addEventListener(pcOffCancel, 'click', () => this._powerOffPCCancel());
-	}
-
-	_addDimmerHandlers() {
-		for (let i = 0; i < this._dimmers.length; i++) {
-			this.addEventListener(this._dimmers[i].children[0], 'change', (event) => {
-				const index = event.currentTarget.id.split('-')[1];
-				this._homeState.dimmers[index - 1].state = this._homeState.dimmers[index - 1].state === 1 ? 0 : 1;
-				const xmlHttp = new XMLHttpRequest();
-				xmlHttp.open('GET', this._espHost + '/dimmer?i=' + index + '&s=' + this._homeState.dimmers[index - 1].state, true);
-				xmlHttp.send(null);
-			});
-		}
-	}
-
-	_powerOnPC() {
-
-	}
-
-	_powerOffPC() {
-		let xmlHttp = new XMLHttpRequest();
-		xmlHttp.onreadystatechange = function() { 
-			if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-				snackbarContainer.MaterialSnackbar.showSnackbar({message: 'Выключение запущено'});
-			}
-		}
-		xmlHttp.open('GET', '/off', true);
-		xmlHttp.send(null);
-	}
-
-	_powerOffPCCancel() {
-		let xmlHttp = new XMLHttpRequest();
-		xmlHttp.onreadystatechange = function() { 
-			if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-				snackbarContainer.MaterialSnackbar.showSnackbar({message: 'Выключение отменено'});
-			}
-		}
-		xmlHttp.open('GET', '/off/cancel', true);
-		xmlHttp.send(null);
+	_addListeners() {
+		this.addEventListener(this.livingSwitch, 'change', () => {
+			this.houseState.relayLivingOn = !this.houseState.relayLivingOn;
+			this._writeState();
+		});
+		this.addEventListener(this.diningSwitch, 'change', () => {
+			this.houseState.relayDiningOn = !this.houseState.relayDiningOn;
+			this._writeState();
+		});
+		this.addEventListener(this.kitchenSwitch, 'change', () => {
+			this.houseState.relayKitchenOn = !this.houseState.relayKitchenOn;
+			this._writeState();
+		});
+		this.addEventListener(this.hallwaySwitch, 'change', () => {
+			this.houseState.relayHallwayOn = !this.houseState.relayHallwayOn;
+			this._writeState();
+		});
 	}
 }

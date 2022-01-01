@@ -1,8 +1,1 @@
-{
-    "humidity": 0,
-    "temperature": 0,
-    "relayKitchenOn": false,
-    "relayLivingOn": false,
-    "relayDiningOn": false,
-    "relayHallwayOn": false
-}
+{"humidity":0,"temperature":0,"relayKitchenOn":false,"relayLivingOn":true,"relayDiningOn":false,"relayHallwayOn":false}
